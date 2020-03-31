@@ -1,15 +1,21 @@
 package com.example.piaozhe.ndkdemo.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Picture;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.example.piaozhe.ndkdemo.R;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -26,9 +32,12 @@ public class MyView extends View {
     private Canvas canvas;
     private int[] colors = {Color.RED,Color.GREEN, Color.BLUE,Color.BLACK};
     private int[] cornersTo = {90,90, 90,90};
+
+    private Context context;
     public MyView(Context context) {
         super(context);
         initView();
+        this.context = context;
     }
 
     private void initView() {
@@ -42,6 +51,7 @@ public class MyView extends View {
 
     public MyView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs,0);
+        this.context = context;
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(Color.BLUE);
@@ -49,6 +59,7 @@ public class MyView extends View {
 
     public MyView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
 
     }
 
@@ -125,10 +136,33 @@ public class MyView extends View {
         canvas.drawArc(rectArc2,0,90,true,paint);
         canvas.drawArc(rectArc3,0,90,false,paint);
 
-        //绘制饼图
+        //7、绘制饼图
         drawPieChart(canvas);
+
+
+        //8、绘制图片
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+
+        //绘制的图片距左距顶部的起始点开始绘制
+        canvas.drawBitmap(bitmap,50,1520,paint);
+
+        //9、绘制文字
+        paint.setTextSize(40);
+        //绘制x,y中x表示文字最左起始点，y表示到文字底部基线位置，开始绘制
+        canvas.drawText("自定义View",550,1550,paint);
+        //绘制start,end表示截取位置
+        canvas.drawText("abcdef",1,3,550,1600,paint);
+        paint.setColor(Color.BLUE);
+
+//        按照路径绘制文字
+//        Path path = new Path();
+//        path.addArc(new RectF(550,1660,1000,2300),0,90);
+//        canvas.drawTextOnPath("abc",path,550,1700,paint);
+
+
     }
 
+    //循环绘制扇形，顺时针方向
     private void drawPieChart(Canvas canvas) {
         int currentStart=cornersTo[0];
         paint.setStyle(Paint.Style.FILL);
@@ -144,6 +178,15 @@ public class MyView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int mode = MeasureSpec.getMode(widthMeasureSpec);
+        int size = MeasureSpec.getSize(widthMeasureSpec);
+
+    }
+
+    //可以设置view宽高
+    @Override
+    public void layout(int l, int t, int r, int b) {
+        super.layout(l, t, r, b);
 
     }
 

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ndkdemo</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+<!--    <string name="rsa_sc">HoC/JfOTN65Axto6uphElmAZPA/vDQwQ0Z+UpuuOhAwCLbaeCau0vuOucs28+GyR</string>-->
+    <string name="rsa_sc">56789</string>
 </resources>

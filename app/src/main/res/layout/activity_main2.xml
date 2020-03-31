@@ -9,4 +9,31 @@
     <com.example.piaozhe.ndkdemo.widget.MyView
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/progress_btn"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="自定义枫叶加载进度View"/>
+    <Button
+        android:id="@+id/quadTo_btn"
+        android:layout_alignParentRight="true"
+
+        android:layout_below="@id/progress_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="贝塞尔曲线View"/>
+    <Button
+        android:id="@+id/button_click"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="跳转到自定义View平移缩放旋转"
+        android:layout_alignParentBottom="true"/>
+    <Button
+        android:id="@+id/button_click1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Native JAVA 互相调用"
+        android:layout_below="@+id/quadTo_btn"/>
 </RelativeLayout>

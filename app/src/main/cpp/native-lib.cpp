@@ -21,6 +21,8 @@ Java_com_example_piaozhe_ndkdemo_MainActivity_stringFromJNI(
 }
 
 
+
+
 //动态注册
 //JNICALL jstring stringFromJNI(JNIEnv *env, jobject /* this */) {
 //
@@ -32,10 +34,38 @@ JNICALL jint localAdd(JNIEnv *env, jobject thiz, jint a, jint b) {
     return a + b;
 }
 
+//JNI 调用JAVA层静态方法
+JNICALL void native_call_Java(JNIEnv *env, jobject thiz) {
+    jclass object = env->FindClass("com/example/piaozhe/ndkdemo/MainActivity");
+
+    if (NULL == object){
+        return;
+    }
+    jmethodID staticMethodId = env->GetStaticMethodID(object, "stringToNative",
+
+                                                      "()Ljava/lang/String;");
+
+    if(NULL == staticMethodId){
+
+    }
+
+    jstring objectResult = (jstring)env->CallStaticObjectMethod(object, staticMethodId);
+
+
+    const char *string = env->GetStringUTFChars(objectResult, NULL);
+
+    env->DeleteLocalRef(object);
+    env ->DeleteLocalRef(objectResult);
+
+    LOGD("从java层返回结果 %s",string);
+
+}
+
 extern "C"
 //旋转图片90度
 JNIEXPORT jobject
-JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setBitmap(JNIEnv *env, jobject, jobject bitmap) {
+JNICALL
+Java_com_example_piaozhe_ndkdemo_MainActivity_setBitmap(JNIEnv *env, jobject, jobject bitmap) {
 
     AndroidBitmapInfo bitmapInfo;
     int ret;
@@ -57,10 +87,10 @@ JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setBitmap(JNIEnv *env, job
 
     int whereToGet = 0;
 
-    for(int x = newWidth; x>=0; --x){
+    for (int x = newWidth; x >= 0; --x) {
         for (int y = 0; y < newHeight; ++y) {
             uint32_t pixel = ((uint32_t *) bitmapPixels)[whereToGet++];
-            newBitmapPixels[newWidth * y +x] = pixel;
+            newBitmapPixels[newWidth * y + x] = pixel;
         }
     }
 
@@ -68,7 +98,7 @@ JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setBitmap(JNIEnv *env, job
 
     void *resultBitmapPixels;
 
-    if ((ret = AndroidBitmap_lockPixels(env, newBitmap, &resultBitmapPixels)) < 0){
+    if ((ret = AndroidBitmap_lockPixels(env, newBitmap, &resultBitmapPixels)) < 0) {
         LOGD("AndroidBitmap_lockPixels() failed ! error=%d", ret);
         return NULL;
     }
@@ -84,24 +114,26 @@ JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setBitmap(JNIEnv *env, job
 }
 
 extern "C"
-//旋转图片90度
+//灰度图片
 JNIEXPORT void
-JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setWhiteBlackBitmap(JNIEnv *env,jobject obj, jobject jsrcBitmap, jobject desBitmap){
+JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setWhiteBlackBitmap(JNIEnv *env, jobject obj,
+                                                                          jobject jsrcBitmap,
+                                                                          jobject desBitmap) {
 
     AndroidBitmapInfo srcInfo, dstInfo;
     if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_getInfo(env, jsrcBitmap, &srcInfo)
-            || ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_getInfo(env, desBitmap, &dstInfo)){
+        || ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_getInfo(env, desBitmap, &dstInfo)) {
         LOGD("get bitmap info failed");
         return;
     }
-    
+
     void *srcBuf, *dstBuf;
-    if(ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, jsrcBitmap, &srcBuf)){
+    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, jsrcBitmap, &srcBuf)) {
         LOGD("lock src bitmap failed");
         return;
     }
-    
-    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, desBitmap, & dstBuf)){
+
+    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, desBitmap, &dstBuf)) {
         LOGD("lock dst bitmap failed");
         return;
     }
@@ -111,15 +143,15 @@ JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setWhiteBlackBitmap(JNIEnv
     int32_t *srcPixs = static_cast<int32_t *>(srcBuf);//
     int32_t *desPixs = static_cast<int32_t *>(dstBuf);
 
-    int  alpha = 0xFF << 24;
+    int alpha = 0xFF << 24;
     int i, j;
-    int  color;
-    int  red;
-    int  green;
-    int  blue;
+    int color;
+    int red;
+    int green;
+    int blue;
 
-    for ( i = 0; i < h; ++i) {
-        for ( j = 0; j < w; ++j) {
+    for (i = 0; i < h; ++i) {
+        for (j = 0; j < w; ++j) {
             color = srcPixs[w * i + j];
 
             //分离三原色
@@ -137,19 +169,38 @@ JNICALL Java_com_example_piaozhe_ndkdemo_MainActivity_setWhiteBlackBitmap(JNIEnv
     AndroidBitmap_unlockPixels(env, jsrcBitmap);
     AndroidBitmap_unlockPixels(env, desBitmap);
 }
+
 //JNIEnv 指代java本地接口环境，
 jint registerMethod(JNIEnv *env) {
+//找到java层中的类对象，得到jclass
     jclass clz = env->FindClass("com/example/piaozhe/ndkdemo/MainActivity");
     if (clz == NULL) {
         LOGD("can't find class: com/example/piaozhe/ndkdemo/MainActivity");
     }
     JNINativeMethod jniNativeMethod[] = {
 //            {"stringFromJNI", "()Ljava/lang/String;",         (void *) stringFromJNI},
-                                         {"addValue",      "(II)I",                        (int *) localAdd},
+            {"addValue", "(II)I", (int *) localAdd}
+//            {"nativeCallJava", "()", (void *) native_call_Java}
+
 //                                         {"setBitmap",     "(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;", ( *) processBitmap}
     };
     return env->RegisterNatives(clz, jniNativeMethod,
                                 sizeof(jniNativeMethod) / sizeof(jniNativeMethod[0]));
+}
+
+//动态注册NativeActivity中调用方法
+jint registerMethodNativeActivity(JNIEnv *env) {
+    jclass clz = env->FindClass("com/example/piaozhe/ndkdemo/NativeActivity");
+    if (NULL == clz) {
+        LOGD("can't find class: com/example/piaozhe/ndkdemo/NativeActivity");
+
+    }
+
+    JNINativeMethod jniNativeMethod[] = {
+            {"nativeCallJava", "()", (void *) native_call_Java}
+    };
+
+    return env -> RegisterNatives(clz, jniNativeMethod, sizeof(jniNativeMethod) / sizeof(jniNativeMethod[0]));
 }
 
 void createLocalObject(JNIEnv *env) {
@@ -165,8 +216,10 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
     jint result = registerMethod(env);
+//    jint resultNative = registerMethodNativeActivity(env);
 //    jint registerAddResult = registerAddMethod(env);
     LOGD("RegisterNatives result: %d", result);
+//    LOGD("RegisterNatives resultNative: %d", resultNative);
     return JNI_VERSION_1_6;
 }
 
@@ -194,12 +247,14 @@ Java_com_example_piaozhe_ndkdemo_MainActivity_stringJNITest(
     return env->NewStringUTF(hello.c_str());
 }
 
-jobject generateBitmap(JNIEnv *env, uint32_t newWidth, uint32_t newHeight){
+//重新创建Bitmap对象并返回
+jobject generateBitmap(JNIEnv *env, uint32_t newWidth, uint32_t newHeight) {
 
     jclass bitmapClass = env->FindClass("android/graphics/Bitmap");
 
 
-    jmethodID pCreatBitmapID = env->GetStaticMethodID(bitmapClass, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+    jmethodID pCreatBitmapID = env->GetStaticMethodID(bitmapClass, "createBitmap",
+                                                      "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
 
     jstring configName = env->NewStringUTF("ARGB_8888");
     jclass bitmapConfigClass = env->FindClass("Landroid/graphics/Bitmap$Config;");
@@ -209,7 +264,8 @@ jobject generateBitmap(JNIEnv *env, uint32_t newWidth, uint32_t newHeight){
 
     jobject pJConfigobject = env->CallStaticObjectMethod(bitmapConfigClass, valueOfId, configName);
 
-    jobject newBitmap = env->CallStaticObjectMethod(bitmapClass, pCreatBitmapID, newWidth, newHeight, pJConfigobject);
+    jobject newBitmap = env->CallStaticObjectMethod(bitmapClass, pCreatBitmapID, newWidth,
+                                                    newHeight, pJConfigobject);
 
     return newBitmap;
 }
