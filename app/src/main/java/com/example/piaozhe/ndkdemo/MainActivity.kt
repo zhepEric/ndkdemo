@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.LinearLayout
 import com.example.piaozhe.ndkdemo.R.id.*
 import com.example.piaozhe.ndkdemo.jni.JniNativeActivity
+import com.example.piaozhe.ndkdemo.media.AudioActivity
 import com.example.piaozhe.ndkdemo.opengl.OpenglActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -91,5 +92,9 @@ class MainActivity : AppCompatActivity() {
     fun onNativeSign(view: View) {
         startActivity(Intent(this,JniNativeActivity::class.java))
 
+    }
+
+    fun onAudio(view: View) {
+        startActivity(Intent(this,AudioActivity::class.java))
     }
 }

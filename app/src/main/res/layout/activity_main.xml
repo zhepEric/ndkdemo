@@ -74,4 +74,14 @@
         android:text="密钥安全管理 硬编码到native层"
         android:onClick="onNativeSign"
         />
+    <Button
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="音频"
+        android:onClick="onAudio"
+        />
 </LinearLayout>

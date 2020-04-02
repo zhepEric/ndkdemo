@@ -42,7 +42,7 @@ jstring nativesign::nativeSecretStr(JNIEnv *env,jobject) {
 //native硬编码RSA公钥，AES密钥
 //const char *public_key = "rTdRQmZlc3FusiEW/guBBwuK5yDS1RUBkBOclMASkmGd62GqRYJu/fp4uo/1yDn3";
 //使用IDA破解后直接获得此处明文
-const char *public_key = "01234";
+const char *public_key = "9D23FABEC002A";
 
 JNIEXPORT JNICALL
 jstring nS(JNIEnv *env,jobject){

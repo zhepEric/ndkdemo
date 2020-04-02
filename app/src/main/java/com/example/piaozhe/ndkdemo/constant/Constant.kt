@@ -11,5 +11,5 @@ object Constant {
             "cq9W22YsH2P9XfMOSUdbFeXm8ywSLkzSWpoRbMuw33jY/bSXdPOXmYOiwTWEkN1u"
             + "aQIDAQAB")
 
-    const val AES_KEY = "ABCDEF"
+    const val AES_KEY = "95F1D663CD202"
 }

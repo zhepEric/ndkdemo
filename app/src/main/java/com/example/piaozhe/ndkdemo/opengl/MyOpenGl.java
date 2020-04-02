@@ -1,6 +1,8 @@
 package com.example.piaozhe.ndkdemo.opengl;
 
 import android.content.Context;
+import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -16,6 +18,7 @@ public class MyOpenGl extends GLSurfaceView{
 
 
     private MyRender myRender;
+    AudioRecord audioRecord;
 
     public MyOpenGl(Context context) {
         super(context);
