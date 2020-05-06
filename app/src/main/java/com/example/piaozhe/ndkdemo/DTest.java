@@ -9,6 +9,7 @@ import com.zhep.demo.DefaultTest;
 public class DTest {
 
     public void getDefault(){
+        //测试protected修饰符,只能本包访问,或者子类
         DefaultTest defaultTest = new DefaultTest();
 
 
